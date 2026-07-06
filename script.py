@@ -1,8 +1,15 @@
 import tkinter as tk
 from tkinter import messagebox
 
+def intropage():
+    intro_pg.title("Intro Page")
+    intro_pg.geometry("500x300")
+    intro_page.configure(bg="#f0f0f0")
+
+
+
 def login():
-    username = username_entry.get()
+    email = username_entry.get()
     password = password_entry.get()
 
     if email == "cbd@outlook.com" and password == "spunk":
@@ -22,11 +29,11 @@ def open_front_page():
 
     title_label = tk.Label(
         front_page,
-        text="Welcome to the Front Page!",
+        text="Welcome to Outgolfed!",
         font=("Calibri", 20, "bold"),
         bg="#f0f0f0"
     )
-    title_label.pack(pady=40)
+    title_label.pack(pady=25)
 
     info_label = tk.Label(
         front_page,
@@ -67,7 +74,7 @@ title.pack(pady=20)
 
 username_label = tk.Label(
     login_window,
-    text="Username",
+    text="Email",
     font=("Calibri", 12),
     bg="#dfe6e9"
 )
