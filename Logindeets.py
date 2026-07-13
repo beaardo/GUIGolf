@@ -1,10 +1,13 @@
 import tkinter as tk
 from tkinter import messagebox
+import time
+maintest=False
+
 
 def loginpage():
     intro_pg.withdraw()
     global login_window
-    login_window = tk.Tk()
+    login_window = tk.Toplevel()
     login_window.title("Login Page")
     login_window.geometry("400x300")
     login_window.configure(bg="#dfe6e9")
@@ -47,20 +50,26 @@ def loginpage():
         bg="#0984e3",
         fg="white",
         width=15,
-        command= lambda: open_front_page()
+        command= lambda:loginpls()
     )
     login_button.pack(pady=20)
-    login_window.mainloop()
 
-def login():
+
+def loginpls():
     email = username_entry.get()
     password = password_entry.get()
 
     if email == "cbd@outlook.com" and password == "spunk":
         open_front_page()
+
+        from mainn import mainpage
+        def switch_to_main():
+            front_page.withdraw()
+            mainpage()
+        login_window.after(3000, switch_to_main)
+
     else:
         messagebox.showerror("Login Failed", "Invalid username or password")
-
 
 
 def open_front_page():
@@ -80,15 +89,19 @@ def open_front_page():
     )
     info_label.pack(pady=10)
 
+
     logout_button = tk.Button(
         front_page,
-        text="Logout",
+        text="Cancel",
         font=("Calibri", 12),
         bg="red",
         fg="white",
         command=lambda: logout(front_page)
+
     )
     logout_button.pack(pady=30)
+
+
 
 
 def logout(front_page):
