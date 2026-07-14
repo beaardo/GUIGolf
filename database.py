@@ -66,7 +66,6 @@ def gamecreation():
     """)
     conn.commit()
 
-    print("Table made")
     for i in range(1, 11):
         PAR = int(input("Enter Par number: "))
         DIST = int(input("Enter distance from tee: "))
