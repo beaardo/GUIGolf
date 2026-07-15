@@ -13,7 +13,6 @@ slope_rating = 0
 course_rating = 0.0
 handicap = 0
 score = 0
-totalscore = 0
 differential = 0
 mostusedclub = "undefined"
 first_n = "Corey"
@@ -21,6 +20,11 @@ last_n = "Beard"
 dob = "2009-06-11"
 club = "Shooters Hill"
 email = "cbd@outlook.com"
+PAR=0
+DIST=0
+Shot=0
+Clubs_usd=0
+Putter_coun=0
 
 # cursor.execute("""
 # CREATE TABLE IF NOT EXISTS user (
@@ -66,21 +70,17 @@ def gamecreation():
     """)
     conn.commit()
 
-    for i in range(1, 11):
-        PAR = int(input("Enter Par number: "))
-        DIST = int(input("Enter distance from tee: "))
-        Shot = int(input("Enter number of shots taken: "))
-        Clubs_usd = input("Enter which Clubs used: ")
-        Putter_coun = int(input("Enter how many times was putter used? "))
-        cursor.execute("""
-        INSERT INTO game (PAR, DISTANCE, Shots, Clubs_used, Putter_count)
-        VALUES (?, ?, ?, ?, ?)
-        """, (PAR, DIST, Shot, Clubs_usd, Putter_coun))
-        print("Row inserted successfully.")
-        totalscore = totalscore + Shot
-        differential = ((Shot - course_rating) * 113) / slope_rating
-        gamelist.append(differential)
-        conn.commit()
+def game_append():
+    cursor.execute("""
+    INSERT INTO game (PAR, DISTANCE, Shots, Clubs_used, Putter_count)
+    VALUES (?, ?, ?, ?, ?)
+    """, (PAR, DIST, Shot, Clubs_usd, Putter_coun))
+    print("Row inserted successfully.")
+    cursor.execute("SELECT SUM(Shots) FROM game")
+    totalscore = cursor.fetchone()[0]
+    differential = ((Shot - course_rating) * 113) / slope_rating
+    gamelist.append(differential)
+    conn.commit()
 
     # Get all clubs used from the table
     cursor.execute("SELECT Clubs_used FROM game")
