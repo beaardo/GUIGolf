@@ -78,9 +78,11 @@ def game_append():
     print("Row inserted successfully.")
     cursor.execute("SELECT SUM(Shots) FROM game")
     totalscore = cursor.fetchone()[0]
-    differential = ((Shot - course_rating) * 113) / slope_rating
+    differential = ((Shot - 69.2) * 113) / 122 #course_rating,slope_rating
     gamelist.append(differential)
     conn.commit()
+
+def stats():
 
     # Get all clubs used from the table
     cursor.execute("SELECT Clubs_used FROM game")

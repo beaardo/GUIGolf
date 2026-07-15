@@ -29,7 +29,7 @@ def mainpage():
 
     tk.Button(menu, text="Overview",  font=("Calibri", 16, "bold"),width=15,height=2, command = lambda:page_ovv()).pack(pady=12.5)
     tk.Button(menu, text="Add New Game",  font=("Calibri", 16, "bold"),width=15,height=2, command = lambda:crea_button()).pack(pady=12.5)
-    tk.Button(menu, text="Previous Games", font=("Calibri", 16, "bold"),width=15,height=2).pack(pady=12.5)
+    tk.Button(menu, text="Previous Games", font=("Calibri", 16, "bold"),width=15,height=2, command = lambda:prevview()).pack(pady=12.5)
     tk.Button(menu, text="Settings", font=("Calibri", 16, "bold"),width=15,height=2).pack(pady=12.5)
 
     def clearcontents():
@@ -53,6 +53,8 @@ def mainpage():
         gamecreation()
         form = tk.Frame(content, bg="white")
         form.pack(pady=20)
+        global currenthole
+        currenthole=1
 
         # Hole Number
         tk.Label(form, text="Hole:", font=("Calibri", 14), bg="white").grid(row=0, column=0, padx=10, pady=10,
@@ -91,6 +93,8 @@ def mainpage():
         putts_entry.grid(row=5, column=1)
 
 
+
+
         def savegame():
             global PAR
             PAR = par_entry.get()
@@ -103,6 +107,18 @@ def mainpage():
             global Putter_coun
             Putter_coun = putts_entry.get()
             game_append()
+            global currenthole
+            currenthole+=1
+            if currenthole <= 10:
+                game_cre()
+            else:
+                clearcontents()
+                tk.Label(
+                    content,
+                    text="Game Complete!",
+                    font=("Calibri", 24, "bold"),
+                    bg="white"
+                ).pack(pady=50)
             content.after(2000, clearcontents)
 
 
@@ -112,15 +128,14 @@ def mainpage():
         tk.Button(content, text="Save", font=("Calibri", 14, "bold"), bg="#8BC34A", fg="white", command = lambda:savegame()
         ).pack(pady=20)
 
-            # cursor.execute("""
-            # INSERT INTO game (PAR, DISTANCE, Shots, Clubs_used, Putter_count)
-            # VALUES (?, ?, ?, ?, ?)
-            # """, (PAR, DIST, Shot, Clubs_usd, Putter_coun))
-            # print("Row inserted successfully.")
-            # totalscore = totalscore + Shot
-            # differential = ((Shot - course_rating) * 113) / slope_rating
-            # gamelist.append(differential)
-            # conn.commit()
+    def prevview():
+        clearcontents()
+        cursor.execute("SELECT COUNT(*) FROM game")
+        count = cursor.fetchone()[0]
+        if count == 0:
+            tk.Label(content, text="No stats found", font=("Calibri", 20, "bold"), bg="#dfe6e9").place(x=25, y=40)
+            tk.Label(content, text="Please Create New Game", font=("Calibri", 20, "bold"), bg="#dfe6e9").place(x=25,
+                                                                                                               y=80)
 
         # Get all clubs used from the table
         # cursor.execute("SELECT Clubs_used FROM game")
