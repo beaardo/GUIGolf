@@ -70,12 +70,17 @@ def gamecreation():
     """)
     conn.commit()
 
-def game_append():
+def game_append(par, dist, shot, clubs, putts):
     cursor.execute("""
     INSERT INTO game (PAR, DISTANCE, Shots, Clubs_used, Putter_count)
     VALUES (?, ?, ?, ?, ?)
     """, (PAR, DIST, Shot, Clubs_usd, Putter_coun))
     print("Row inserted successfully.")
+    print(PAR)
+    print(DIST)
+    print(Shot)
+    print(Clubs_usd)
+    print(Putter_coun)
     cursor.execute("SELECT SUM(Shots) FROM game")
     totalscore = cursor.fetchone()[0]
     differential = ((Shot - 69.2) * 113) / 122 #course_rating,slope_rating

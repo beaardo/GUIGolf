@@ -1,8 +1,10 @@
 import tkinter as tk
 from tkinter import*
 from tkinter import ttk
+from tkinter import messagebox
 import time
 from database import *
+from Logindeets import logout
 
 
 
@@ -30,7 +32,7 @@ def mainpage():
     tk.Button(menu, text="Overview",  font=("Calibri", 16, "bold"),width=15,height=2, command = lambda:page_ovv()).pack(pady=12.5)
     tk.Button(menu, text="Add New Game",  font=("Calibri", 16, "bold"),width=15,height=2, command = lambda:crea_button()).pack(pady=12.5)
     tk.Button(menu, text="Previous Games", font=("Calibri", 16, "bold"),width=15,height=2, command = lambda:prevview()).pack(pady=12.5)
-    tk.Button(menu, text="Settings", font=("Calibri", 16, "bold"),width=15,height=2).pack(pady=12.5)
+    tk.Button(menu, text="Settings", font=("Calibri", 16, "bold"),width=15,height=2, command = lambda:settingz()).pack(pady=12.5)
 
     def clearcontents():
         for widget in content.winfo_children():
@@ -48,13 +50,13 @@ def mainpage():
     def crea_button():
         clearcontents()
         tk.Button(content,text="Click to Create New Game",  font=("Calibri", 12, "bold"),width=40,height=1, command = lambda:game_cre()).pack(pady=5)
+        global currenthole
+        currenthole=1
     def game_cre():
         clearcontents()
         gamecreation()
         form = tk.Frame(content, bg="white")
         form.pack(pady=20)
-        global currenthole
-        currenthole=1
 
         # Hole Number
         tk.Label(form, text="Hole:", font=("Calibri", 14), bg="white").grid(row=0, column=0, padx=10, pady=10,
@@ -96,17 +98,23 @@ def mainpage():
 
 
         def savegame():
+            print("Par entry:", par_entry.get())
+            print("Distance entry:", distance_entry.get())
+            print("Shots entry:", shots_entry.get())
+            print("Clubs entry:", clubs_entry.get())
+            print("Putts entry:", putts_entry.get())
+
             global PAR
-            PAR = par_entry.get()
+            PAR = int(par_entry.get())
             global DIST
-            DIST = distance_entry.get()
+            DIST = float(distance_entry.get())
             global Shot
-            Shot = shots_entry.get()
+            Shot = int(shots_entry.get())
             global Clubs_usd
             Clubs_usd = clubs_entry.get()
             global Putter_coun
-            Putter_coun = putts_entry.get()
-            game_append()
+            Putter_coun = int(putts_entry.get())
+            game_append(PAR, DIST, Shot, Clubs_usd, Putter_coun)
             global currenthole
             currenthole+=1
             if currenthole <= 10:
@@ -119,7 +127,7 @@ def mainpage():
                     font=("Calibri", 24, "bold"),
                     bg="white"
                 ).pack(pady=50)
-            content.after(2000, clearcontents)
+
 
 
 
@@ -149,7 +157,7 @@ def mainpage():
             table.heading("Clubs", text="Clubs Used")
             table.heading("Putts", text="Putts")
 
-            table.column("Row", width=70, anchor = "center")
+            table.column("Hole", width=70, anchor = "center")
             table.column("Par", width=70, anchor="center")
             table.column("Distance", width=100, anchor="center")
             table.column("Shots", width=70, anchor="center")
@@ -169,7 +177,36 @@ def mainpage():
             for row in prevrows:
                 table.insert("","end",values=row)
 
+    def settingz():
+        clearcontents()
 
+        tk.Label(
+            content,
+            text="Settings",
+            font=("Calibri", 24, "bold"),
+            bg="#dfe6e9"
+        ).pack(pady=20)
+
+        tk.Button(content,text="Log Out",font=("Calibri", 16, "bold"), bg="#f39c12", fg="white",width=20,command=logmeout).pack(pady=20)
+
+        tk.Button(content, text="Delete All Game Data",font=("Calibri", 16, "bold"), bg="#e74c3c", fg="white", width=20, command=delete_games).pack(pady=20)
+
+    def logmeout():
+        answer = messagebox.askyesno("Logout","Are you sure you want to log out?")
+
+        if answer:
+            main_window.destroy()
+
+        from Logindeets import loginpage
+        loginpage()
+    def delete_games():
+        answer = messagebox.askyesno("Delete Data", "Are you sure you want to delete all previous games? This cannot be undone." )
+
+        if answer:
+            cursor.execute("DELETE FROM game")
+            conn.commit()
+
+            messagebox.showinfo("Success", "All previous game data has been deleted.")
         # Get all clubs used from the table
         # cursor.execute("SELECT Clubs_used FROM game")
         # clubs = cursor.fetchall()
