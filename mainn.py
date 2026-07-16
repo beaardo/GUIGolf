@@ -47,6 +47,29 @@ def mainpage():
             tk.Label(content, text="No stats found", font=("Calibri", 20, "bold"), bg="#dfe6e9").place(x=25, y=40)
             tk.Label(content, text="Please Create New Game", font=("Calibri", 20, "bold"), bg="#dfe6e9").place(x=25, y=80)
 
+        else:
+            tk.Label(content, text="Your Overview:", font=("Calibri", 24, "bold"), bg="#dfe6e9").pack(pady=20)
+
+            table = ttk.Treeview(content, columns=("Handicap", "Most Used Club"), show="headings", height=10)
+
+            table.heading("Handicap", text="Handicap")
+            table.heading("Most Used Club", text="Most Used Club")
+
+
+            table.column("Handicap", width=70, anchor="center")
+            table.column("Most Used Club", width=100, anchor="center")
+
+            table.pack(pady=20)
+            cursor.execute("""
+                        SELECT Handicap, mostused
+                        FROM stats
+                        """)
+
+            prevrowss = cursor.fetchall()
+
+            for rowes in prevrowss:
+                table.insert("", "end", values=rowes)
+
     def crea_button():
         clearcontents()
         tk.Button(content,text="Click to Create New Game",  font=("Calibri", 12, "bold"),width=40,height=1, command = lambda:game_cre()).pack(pady=5)
@@ -104,6 +127,7 @@ def mainpage():
             print("Clubs entry:", clubs_entry.get())
             print("Putts entry:", putts_entry.get())
 
+            HoleNumber = int(hole_entry.get())
 
             PAR = int(par_entry.get())
 
@@ -114,19 +138,15 @@ def mainpage():
             Clubs_usd = clubs_entry.get()
 
             Putter_coun = int(putts_entry.get())
-            game_append(PAR, DIST, Shot, Clubs_usd, Putter_coun)
+            game_append(HoleNumber, PAR, DIST, Shot, Clubs_usd, Putter_coun)
             global currenthole
             currenthole+=1
             if currenthole <= 10:
                 game_cre()
             else:
                 clearcontents()
-                tk.Label(
-                    content,
-                    text="Game Complete!",
-                    font=("Calibri", 24, "bold"),
-                    bg="white"
-                ).pack(pady=50)
+                stats()
+                tk.Label(content, text="Game Complete!",font=("Calibri", 24, "bold"),bg="white").pack(pady=50)
 
 
 
@@ -146,7 +166,7 @@ def mainpage():
 
         else:
             clearcontents()
-            tk.Label(content,text="Previous Games",font=("Calibri", 24, "bold"),bg="white").pack(pady=20)
+            tk.Label(content,text="Previous Games",font=("Calibri", 24, "bold"),bg="#dfe6e9").pack(pady=20)
 
             table = ttk.Treeview(content,columns=("Hole","Par", "Distance", "Shots", "Clubs", "Putts"),show="headings",height=10)
 

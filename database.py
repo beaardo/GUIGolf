@@ -59,7 +59,7 @@ Putter_coun=0
 def gamecreation():
     cursor.execute("""
     CREATE TABLE IF NOT EXISTS game (
-        HoleNumber INTEGER PRIMARY KEY AUTOINCREMENT,
+        HoleNumber INTEGER PRIMARY KEY,
         PAR Integer NOT NULL,
         DISTANCE FLOAT NOT NULL,
         Shots Integer NOT NULL,
@@ -70,11 +70,11 @@ def gamecreation():
     """)
     conn.commit()
 
-def game_append(par, dist, shot, clubs, putts):
+def game_append(hole, par, dist, shot, clubs, putts):
     cursor.execute("""
-    INSERT INTO game (PAR, DISTANCE, Shots, Clubs_used, Putter_count)
-    VALUES (?, ?, ?, ?, ?)
-    """, (par, dist, shot, clubs, putts))
+    INSERT INTO game (HoleNumber, PAR, DISTANCE, Shots, Clubs_used, Putter_count)
+    VALUES (?, ?, ?, ?, ?, ?)
+    """, (hole, par, dist, shot, clubs, putts))
     print("Row inserted successfully.")
     print(PAR)
     print(DIST)
@@ -138,4 +138,3 @@ def stats():
     """, (first_n, last_n, handicap, mostusedclub))
     conn.commit()
 
-    conn.close()

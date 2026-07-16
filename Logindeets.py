@@ -59,7 +59,7 @@ def loginpls():
     email = username_entry.get()
     password = password_entry.get()
 
-    if email == "cbd@outlook.com" and password == "spunk":
+    if email == "cbd@outlook.com" and password == "1234":
         open_front_page()
 
         from mainn import mainpage
