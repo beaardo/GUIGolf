@@ -134,8 +134,41 @@ def mainpage():
         count = cursor.fetchone()[0]
         if count == 0:
             tk.Label(content, text="No stats found", font=("Calibri", 20, "bold"), bg="#dfe6e9").place(x=25, y=40)
-            tk.Label(content, text="Please Create New Game", font=("Calibri", 20, "bold"), bg="#dfe6e9").place(x=25,
-                                                                                                               y=80)
+            tk.Label(content, text="Please Create New Game", font=("Calibri", 20, "bold"), bg="#dfe6e9").place(x=25,y=80)
+
+        else:
+            clearcontents()
+            tk.Label(content,text="Previous Games",font=("Calibri", 24, "bold"),bg="white").pack(pady=20)
+
+            table = ttk.Treeview(content,columns=("Hole","Par", "Distance", "Shots", "Clubs", "Putts"),show="headings",height=10)
+
+            table.heading("Hole", text="Hole")
+            table.heading("Par", text="Par")
+            table.heading("Distance", text="Distance")
+            table.heading("Shots", text="Shots")
+            table.heading("Clubs", text="Clubs Used")
+            table.heading("Putts", text="Putts")
+
+            table.column("Row", width=70, anchor = "center")
+            table.column("Par", width=70, anchor="center")
+            table.column("Distance", width=100, anchor="center")
+            table.column("Shots", width=70, anchor="center")
+            table.column("Clubs", width=180, anchor="center")
+            table.column("Putts", width=70, anchor="center")
+
+            table.pack(pady=20)
+
+            cursor.execute("""
+            SELECT HoleNumber, PAR, DISTANCE, Shots, Clubs_used, Putter_count
+            FROM game
+            ORDER BY HoleNumber
+            """)
+
+            prevrows = cursor.fetchall()
+
+            for row in prevrows:
+                table.insert("","end",values=row)
+
 
         # Get all clubs used from the table
         # cursor.execute("SELECT Clubs_used FROM game")
