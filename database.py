@@ -74,7 +74,7 @@ def game_append(par, dist, shot, clubs, putts):
     cursor.execute("""
     INSERT INTO game (PAR, DISTANCE, Shots, Clubs_used, Putter_count)
     VALUES (?, ?, ?, ?, ?)
-    """, (PAR, DIST, Shot, Clubs_usd, Putter_coun))
+    """, (par, dist, shot, clubs, putts))
     print("Row inserted successfully.")
     print(PAR)
     print(DIST)

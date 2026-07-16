@@ -104,15 +104,15 @@ def mainpage():
             print("Clubs entry:", clubs_entry.get())
             print("Putts entry:", putts_entry.get())
 
-            global PAR
+
             PAR = int(par_entry.get())
-            global DIST
+
             DIST = float(distance_entry.get())
-            global Shot
+
             Shot = int(shots_entry.get())
-            global Clubs_usd
+
             Clubs_usd = clubs_entry.get()
-            global Putter_coun
+
             Putter_coun = int(putts_entry.get())
             game_append(PAR, DIST, Shot, Clubs_usd, Putter_coun)
             global currenthole
