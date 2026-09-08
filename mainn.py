@@ -65,38 +65,32 @@ def mainpage(): #Main page seen when logged in
         form.pack(pady=20)
 
         # Hole Number
-        tk.Label(form, text="Hole:", font=("Calibri", 14), bg="white").grid(row=0, column=0, padx=10, pady=10,
-                                                                            sticky="nsew")
+        tk.Label(form, text="Hole:", font=("Calibri", 14), bg="white").grid(row=0, column=0, padx=10, pady=10, sticky="nsew")
         hole_entry = tk.Entry(form, font=("Calibri", 14))
         hole_entry.grid(row=0, column=1)
 
         # Par
-        tk.Label(form, text="Par:", font=("Calibri", 14), bg="white").grid(row=1, column=0, padx=10, pady=10,
-                                                                           sticky="nsew")
+        tk.Label(form, text="Par:", font=("Calibri", 14), bg="white").grid(row=1, column=0, padx=10, pady=10, sticky="nsew")
         par_entry = tk.Entry(form, font=("Calibri", 14))
         par_entry.grid(row=1, column=1)
 
         # Distance
-        tk.Label(form, text="Distance (yards):", font=("Calibri", 14), bg="white").grid(row=2, column=0, padx=10,
-                                                                                        pady=10, sticky="nsew")
+        tk.Label(form, text="Distance (yards):", font=("Calibri", 14), bg="white").grid(row=2, column=0, padx=10, pady=10, sticky="nsew")
         distance_entry = tk.Entry(form, font=("Calibri", 14))
         distance_entry.grid(row=2, column=1)
 
         # Shots
-        tk.Label(form, text="Shots:", font=("Calibri", 14), bg="white").grid(row=3, column=0, padx=10, pady=10,
-                                                                             sticky="nsew")
+        tk.Label(form, text="Shots:", font=("Calibri", 14), bg="white").grid(row=3, column=0, padx=10, pady=10, sticky="nsew")
         shots_entry = tk.Entry(form, font=("Calibri", 14))
         shots_entry.grid(row=3, column=1)
 
         # Clubs Used
-        tk.Label(form, text="Clubs Used:", font=("Calibri", 14), bg="white").grid(row=4, column=0, padx=10, pady=10,
-                                                                                  sticky="nsew")
+        tk.Label(form, text="Clubs Used:", font=("Calibri", 14), bg="white").grid(row=4, column=0, padx=10, pady=10, sticky="nsew")
         clubs_entry = tk.Entry(form, font=("Calibri", 14))
         clubs_entry.grid(row=4, column=1)
 
         # Putts
-        tk.Label(form, text="Number of Putts:", font=("Calibri", 14), bg="white").grid(row=5, column=0, padx=10,
-                                                                                       pady=10, sticky="nsew")
+        tk.Label(form, text="Number of Putts:", font=("Calibri", 14), bg="white").grid(row=5, column=0, padx=10, pady=10, sticky="nsew")
         putts_entry = tk.Entry(form, font=("Calibri", 14))
         putts_entry.grid(row=5, column=1)
 
