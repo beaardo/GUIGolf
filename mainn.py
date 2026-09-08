@@ -5,10 +5,12 @@ from tkinter import messagebox
 import time
 from database import *
 from Logindeets import logout
+from math import pi, cos, sin
+deleted = False
 
 
 
-def mainpage():
+def mainpage(): #Main page seen when logged in
     main_window = tk.Tk()
 
     main_window.title("Main Page")
@@ -34,13 +36,14 @@ def mainpage():
     tk.Button(menu, text="Previous Games", font=("Calibri", 16, "bold"),width=15,height=2, command = lambda:prevview()).pack(pady=12.5)
     tk.Button(menu, text="Settings", font=("Calibri", 16, "bold"),width=15,height=2, command = lambda:settingz()).pack(pady=12.5)
 
-    def clearcontents():
+    def clearcontents(): #clears right side with contents when called
         for widget in content.winfo_children():
             widget.destroy()
 
 
-    def page_ovv():
+    def page_ovv(): #Overview button
         clearcontents()
+
         cursor.execute("SELECT COUNT(*) FROM game")
         count = cursor.fetchone()[0]
         if count == 0:
@@ -48,29 +51,9 @@ def mainpage():
             tk.Label(content, text="Please Create New Game", font=("Calibri", 20, "bold"), bg="#dfe6e9").place(x=25, y=80)
 
         else:
-            tk.Label(content, text="Your Overview:", font=("Calibri", 24, "bold"), bg="#dfe6e9").pack(pady=20)
+            statistics_page(content)
 
-            table = ttk.Treeview(content, columns=("Handicap", "Most Used Club"), show="headings", height=10)
-
-            table.heading("Handicap", text="Handicap")
-            table.heading("Most Used Club", text="Most Used Club")
-
-
-            table.column("Handicap", width=70, anchor="center")
-            table.column("Most Used Club", width=100, anchor="center")
-
-            table.pack(pady=20)
-            cursor.execute("""
-                        SELECT Handicap, mostused
-                        FROM stats
-                        """)
-
-            prevrowss = cursor.fetchall()
-
-            for rowes in prevrowss:
-                table.insert("", "end", values=rowes)
-
-    def crea_button():
+    def crea_button(): # Creates New Game
         clearcontents()
         tk.Button(content,text="Click to Create New Game",  font=("Calibri", 12, "bold"),width=40,height=1, command = lambda:game_cre()).pack(pady=5)
         global currenthole
@@ -120,7 +103,7 @@ def mainpage():
 
 
 
-        def savegame():
+        def savegame(): #game is saved in create game when called
             print("Par entry:", par_entry.get())
             print("Distance entry:", distance_entry.get())
             print("Shots entry:", shots_entry.get())
@@ -135,7 +118,8 @@ def mainpage():
 
             Shot = int(shots_entry.get())
 
-            Clubs_usd = clubs_entry.get()
+            Clubs_usd = clubs_entry.get().lower()
+
 
             Putter_coun = int(putts_entry.get())
             game_append(HoleNumber, PAR, DIST, Shot, Clubs_usd, Putter_coun)
@@ -156,15 +140,15 @@ def mainpage():
         tk.Button(content, text="Save", font=("Calibri", 14, "bold"), bg="#8BC34A", fg="white", command = lambda:savegame()
         ).pack(pady=20)
 
-    def prevview():
+    def prevview(): #previous games button
         clearcontents()
         cursor.execute("SELECT COUNT(*) FROM game")
         count = cursor.fetchone()[0]
-        if count == 0:
+        if count == 0: #if no games are found nothing can be displayed
             tk.Label(content, text="No stats found", font=("Calibri", 20, "bold"), bg="#dfe6e9").place(x=25, y=40)
             tk.Label(content, text="Please Create New Game", font=("Calibri", 20, "bold"), bg="#dfe6e9").place(x=25,y=80)
 
-        else:
+        else: #table displayed
             clearcontents()
             tk.Label(content,text="Previous Games",font=("Calibri", 24, "bold"),bg="#dfe6e9").pack(pady=20)
 
@@ -197,7 +181,7 @@ def mainpage():
             for row in prevrows:
                 table.insert("","end",values=row)
 
-    def settingz():
+    def settingz(): #settings page with logout and clear last game's data
         clearcontents()
 
         tk.Label(
@@ -209,9 +193,9 @@ def mainpage():
 
         tk.Button(content,text="Log Out",font=("Calibri", 16, "bold"), bg="#f39c12", fg="white",width=20,command=logmeout).pack(pady=20)
 
-        tk.Button(content, text="Delete All Game Data",font=("Calibri", 16, "bold"), bg="#e74c3c", fg="white", width=20, command=delete_games).pack(pady=20)
+        tk.Button(content, text="Delete Last Game Data",font=("Calibri", 16, "bold"), bg="#e74c3c", fg="white", width=20, command=delete_games).pack(pady=20)
 
-    def logmeout():
+    def logmeout(): #logout button
         answer = messagebox.askyesno("Logout","Are you sure you want to log out?")
 
         if answer:
@@ -219,8 +203,9 @@ def mainpage():
 
         from Logindeets import loginpage
         loginpage()
-    def delete_games():
-        answer = messagebox.askyesno("Delete Data", "Are you sure you want to delete all previous games? This cannot be undone." )
+    def delete_games(): #delete last game button
+        answer = messagebox.askyesno("Delete Data", "Are you sure you want to delete the previous game? This cannot be undone." )
+        deleted = True
 
         if answer:
             cursor.execute("DELETE FROM game")
@@ -229,3 +214,131 @@ def mainpage():
             messagebox.showinfo("Success", "All previous game data has been deleted.")
 
 
+def statistics_page(content): #pie chart function using clubs used
+    cursor.execute("SELECT COUNT(*) FROM game")
+    count = cursor.fetchone()[0]
+
+    if count != 0:
+
+        canvas = tk.Canvas(content,width=700,height=500,bg="#dfe6e9",highlightthickness=0)
+        canvas.pack(fill="both", expand=True)
+
+        # -------------------------
+        # GET CLUBS FROM DATABASE
+        # -------------------------
+
+        cursor.execute("SELECT Clubs_used FROM game")
+        club_rows = cursor.fetchall()
+
+        # Dictionary to store how many times each club was used
+        club_counts = {}
+
+        for row in club_rows:
+
+            clubs_string = row[0]
+
+            if clubs_string:
+
+                # Split the string wherever there is a comma
+                clubs = clubs_string.split(",")
+
+                for club in clubs:
+
+                    # Remove spaces before/after the club name
+                    club = club.strip()
+
+                    if club:
+
+                        if club in club_counts:
+                            club_counts[club] += 1
+                        else:
+                            club_counts[club] = 1
+
+        print("CLUB COUNTS:", club_counts)
+
+        # -------------------------
+        # CALCULATE TOTAL
+        # -------------------------
+
+        total = sum(club_counts.values())
+
+        print("TOTAL:", total)
+
+        # -------------------------
+        # COLOURS
+        # -------------------------
+
+        colours = [
+            "#3498DB",
+            "#2980B9",
+            "#1ABC9C",
+            "#16A085",
+            "#2ECC71",
+            "#F39C12",
+            "#E74C3C",
+            "#9B59B6",
+            "#E67E22",
+            "#34495E",
+            "#95A5A6"
+        ]
+
+        # -------------------------
+        # TITLE
+        # -------------------------
+
+        canvas.create_text(350,35,text="Golf Club Usage",font=("Calibri", 24, "bold"),fill="black")
+
+        # -------------------------
+        # PIE CHART
+        # -------------------------
+
+        centre_x = 260
+        centre_y = 270
+        radius = 180
+
+        start_angle = 0
+
+        for i, (club, value) in enumerate(club_counts.items()):
+
+            # Work out what percentage this club represents
+            percentage = (value / total) * 100
+
+            # Work out how much of the 360 degree circle it gets
+            extent = (value / total) * 360
+
+            canvas.create_arc(centre_x - radius,centre_y - radius,centre_x + radius,centre_y + radius,start=start_angle,extent=extent,fill=colours[i % len(colours)],outline="white",width=2)
+
+            # -------------------------
+            # PERCENTAGE TEXT
+            # -------------------------
+
+            middle_angle = start_angle + extent / 2
+
+            text_radius = radius * 0.65
+
+            x = centre_x + text_radius * cos(middle_angle * pi / 180)
+
+            y = centre_y - text_radius * sin(middle_angle * pi / 180)
+
+            canvas.create_text(x,y,text=f"{percentage:.1f}%",font=("Calibri", 11, "bold"),fill="white")
+
+            start_angle += extent
+
+        # -------------------------
+        # LEGEND
+        # -------------------------
+
+        legend_x = 480
+        legend_y = 130
+
+        canvas.create_text(legend_x,90,text="Clubs Used",font=("Calibri", 16, "bold"),anchor="w",fill="black")
+
+        for i, (club, value) in enumerate(club_counts.items()):
+
+            percentage = (value / total) * 100
+
+            canvas.create_rectangle(legend_x,legend_y,legend_x + 20,legend_y + 20,fill=colours[i % len(colours)],outline="")
+
+            canvas.create_text(legend_x + 30,legend_y + 10,text=f"{club}: {percentage:.1f}%",anchor="w",font=("Calibri", 11),fill="black")
+
+            legend_y += 40

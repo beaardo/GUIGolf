@@ -9,9 +9,9 @@ cursor = conn.cursor()
 cursor.execute("DROP TABLE IF EXISTS user")
 
 gamelist = []
-slope_rating = 0
-course_rating = 0.0
-handicap = 0
+slope_rating = 122
+course_rating = 69.2
+handicap = 30
 score = 0
 differential = 0
 mostusedclub = "undefined"
@@ -26,37 +26,7 @@ Shot=0
 Clubs_usd=0
 Putter_coun=0
 
-# cursor.execute("""
-# CREATE TABLE IF NOT EXISTS user (
-#     id INTEGER PRIMARY KEY AUTOINCREMENT,
-#     firstname TEXT NOT NULL,
-#     lastname TEXT NOT NULL,
-#     DateOfBirth TEXT NOT NULL,
-#     Handicap FLOAT,
-#     club_name TEXT NOT NULL,
-#     email TEXT NOT NULL
-# )
-#
-# """)
-# print("Table made")
-#
-# cursor.execute("""
-# INSERT INTO user (firstname, lastname, DateOfBirth, Handicap, club_name, email)
-# VALUES (?, ?, ?, ?, ?, ?)
-# """, (first_n, last_n, dob, handicap, club, email))
-#
-# cursor.execute("SELECT club_name FROM user WHERE id = ?", (1,))
-# result = cursor.fetchone()
-# club_name = result[0]
-# if club_name == "Shooters Hill":
-#     slope_rating = 122
-#     course_rating = 69.2
-# print("Row inserted successfully.")
-# conn.commit()
-#
-# cursor.execute("DROP TABLE IF EXISTS game")
-#
-def gamecreation():
+def gamecreation(): #creates database for games
     cursor.execute("""
     CREATE TABLE IF NOT EXISTS game (
         HoleNumber INTEGER PRIMARY KEY,
@@ -70,7 +40,7 @@ def gamecreation():
     """)
     conn.commit()
 
-def game_append(hole, par, dist, shot, clubs, putts):
+def game_append(hole, par, dist, shot, clubs, putts): #appends to the database
     cursor.execute("""
     INSERT INTO game (HoleNumber, PAR, DISTANCE, Shots, Clubs_used, Putter_count)
     VALUES (?, ?, ?, ?, ?, ?)
@@ -83,11 +53,12 @@ def game_append(hole, par, dist, shot, clubs, putts):
     print(Putter_coun)
     cursor.execute("SELECT SUM(Shots) FROM game")
     totalscore = cursor.fetchone()[0]
-    differential = ((Shot - 69.2) * 113) / 122 #course_rating,slope_rating
+    differential = ((Shot - course_rating) * 113) / slope_rating
     gamelist.append(differential)
+
     conn.commit()
 
-def stats():
+def stats(): #gets the stats from the database e.g most used club
 
     # Get all clubs used from the table
     cursor.execute("SELECT Clubs_used FROM game")
@@ -107,9 +78,7 @@ def stats():
 
     print("Most used club (excluding putter):", mostusedclub)
     # Take lowest 10 values
-    lowest_10 = sorted(gamelist)[:10]
-
-    # Calculate handicap
+    lowest_10 = sorted(gamelist)[:min(10, len(gamelist))]
     handicap = sum(lowest_10) * 0.96
 
     cursor.execute("SELECT name FROM sqlite_master WHERE type='table'")
