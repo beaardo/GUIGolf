@@ -44,6 +44,19 @@ def mainpage(): #Main page seen when logged in
     def page_ovv(): #Overview button
         clearcontents()
 
+        cursor.execute("""
+        CREATE TABLE IF NOT EXISTS game (
+            HoleNumber INTEGER PRIMARY KEY,
+            PAR Integer NOT NULL,
+            DISTANCE FLOAT NOT NULL,
+            Shots Integer NOT NULL,
+            Clubs_used TEXT NOT NULL,
+            Putter_count INTEGER NOT NULL
+        )
+
+        """)
+        conn.commit()
+
         cursor.execute("SELECT COUNT(*) FROM game")
         count = cursor.fetchone()[0]
         if count == 0:
